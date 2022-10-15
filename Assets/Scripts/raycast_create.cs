@@ -7,9 +7,11 @@ public class raycast_create : MonoBehaviour
     // See Order of Execution for Event Functions for information on FixedUpdate() and Update() related to physics queries
     [SerializeField]
     public GameObject point_prefab;
+    public ParticleSystem particle_system;
 
     void Update()
     {
+
         if (Input.GetMouseButtonDown(0))
         {
             for (int i = 0; i < 25; i++)
@@ -18,8 +20,12 @@ public class raycast_create : MonoBehaviour
             }
 
         }
-    
-                //StartCoroutine(WaitAndPrint());
+        for(uint i = 0; i < 25; i++)
+        {
+            hit_and_create();
+        }
+
+        //StartCoroutine(WaitAndPrint());
     }
 
 
@@ -38,35 +44,23 @@ public class raycast_create : MonoBehaviour
         layerMask = ~layerMask;
 
         Vector3 forward_vector = transform.TransformDirection(Vector3.forward);
-        forward_vector.x = forward_vector.x + Random.Range(-0.1f, 0.1f);
-        forward_vector.y = forward_vector.y + Random.Range(-0.1f, 0.1f);
-        forward_vector.z = forward_vector.z + Random.Range(-0.1f, 0.1f);
+        forward_vector.x = forward_vector.x + Random.Range(-0.15f, 0.15f);
+        forward_vector.y = forward_vector.y + Random.Range(-0.15f, 0.15f);
+        forward_vector.z = forward_vector.z + Random.Range(-0.15f, 0.15f);
 
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(transform.position, forward_vector, out hit, Mathf.Infinity, layerMask))
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-
-
+            particle_system.Stop();
+            particle_system.transform.position = hit.point;
+            particle_system.Play();
+/*            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
             Debug.Log("Did Hit");
-
             var point = hit.point;
-            //GameObject ramdomized_point;
-            //var randomized_point = point;
-            /*            for (int i = 0; i < 10; i++)
-                        {
-                            randomized_point.x = randomized_point.x + Random.Range(-0.3f, 0.3f);
-                            randomized_point.y = randomized_point.y + Random.Range(-0.3f, 0.3f);
-                            randomized_point.z = randomized_point.z + Random.Range(-0.3f, 0.3f);
-                            ramdomized_point = Instantiate(point_prefab, randomized_point, hit.transform.rotation);
-                            ramdomized_point.GetComponent<change_my_colour_according_to_the_distance>().calibration_point = this.gameObject;
-                        }*/
-
-            //exact point
             var created_point = Instantiate(point_prefab, point, hit.transform.rotation);
             var points_script = created_point.GetComponent<change_my_colour_according_to_the_distance>();
-            points_script.calibration_point = this.gameObject;
+            points_script.calibration_point = this.gameObject;*/
         }
         else
         {
